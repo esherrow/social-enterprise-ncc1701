@@ -1,13 +1,13 @@
-const { User } = require(',,/models');
+const { User } = require('../models');
 
 const userController = {
     getAllUsers(req, res){
         User.find({})
             .populate({
                 path: 'thoughts',
-                select: '-_v'
+                select: '-__v'
             })
-            .select('-_v')
+            .select('-__v')
             .then(dbUserData => res.json(dbUserData))
             .catch(err => {
                 console.log(err);
@@ -19,9 +19,9 @@ const userController = {
         User.findOne({_id: params.id})
             .populate({
                 path: 'thoughts',
-                select: '-_v'
+                select: '-__v'
             })
-            .select('-_v')
+            .select('-__v')
             .then(dbUserData => {
                 if(!dbUserData){
                     res.status(404).json({message: 'No User found with that id!'})
@@ -65,10 +65,10 @@ const userController = {
         .catch(err => res.status(400).json(err));
     },
 
-    addFriend({params, body},res){
+    addFriend({params},res){
         User.findOneAndUpdate(
             {_id: params.userId},
-            {$push: {friends: body}},
+            {$push: {friends:{friendId: params.friendId}}},
             {new: true, runValidators: true}
         )
         .then(dbUserData => {
